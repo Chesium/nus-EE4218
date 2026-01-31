@@ -129,7 +129,6 @@ module myip_v1_0
 	reg [$clog2(NUMBER_OF_INPUT_WORDS) - 1:0] read_counter;
 	reg [$clog2(NUMBER_OF_OUTPUT_WORDS) - 1:0] write_counter;
 	reg [RES_depth_bits-1:0] RES_nxt_address;
-	reg REG_read_end;
 	reg Write_waiting; // Wait for 2 cycles
 
    // CAUTION:
@@ -215,7 +214,6 @@ module myip_v1_0
 						RES_read_en 		<= 1;
 						RES_read_address 	<= 0;
 						RES_nxt_address		<= 1;
-						REG_read_end		<= 0;
 						write_counter 		<= 0;
 						Write_waiting		<= 1;
 					end
