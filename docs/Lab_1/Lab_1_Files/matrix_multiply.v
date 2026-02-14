@@ -50,7 +50,6 @@ module matrix_multiply
 	
 	reg init;
 	reg [width-1:0] tmp_res;
-	wire [width-1:0] tmp_res_nxt;
 	reg begin_new_line;
 	reg increase_RES_addr;
 	reg read_end;
@@ -61,7 +60,6 @@ module matrix_multiply
 	
 	assign A_nxt_address	= A_read_address + 1;
 	assign B_nxt_address	= B_read_address + 1;
-	assign tmp_res_nxt		= tmp_res + A_read_data_out * B_read_data_out;
 
 	// assign Done = Start; // dummy code. Change as appropriate.
 	always @(posedge clk) 
@@ -91,7 +89,7 @@ module matrix_multiply
 					read_end 			<= A_nxt_address == 0;
 				end
 				if (A_nxt_address >= 2 || A_nxt_address == 0) // when A B outputs are available
-					tmp_res				<= tmp_res_nxt;
+					tmp_res				<= tmp_res + A_read_data_out * B_read_data_out;
 				if (increase_RES_addr) begin
 					RES_write_address 	<= RES_write_address + 1;
 					increase_RES_addr	<= 0;
@@ -100,7 +98,7 @@ module matrix_multiply
 				if (begin_new_line) begin
 					// STORE THE TMP_RES
 					RES_write_en 		<= 1;
-					RES_write_data_in 	<= tmp_res_nxt;
+					RES_write_data_in 	<= tmp_res + A_read_data_out * B_read_data_out;
 					increase_RES_addr	<= 1;
 					tmp_res				<= 0;
 					begin_new_line		<= 0;
