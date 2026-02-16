@@ -1,0 +1,2 @@
+[fifo_loopback] AXIS Loopback Time: 67799 cycles = 677996.77ns = 678.00us
+[matmul] Time: 1338 cycles = 13380.13ns = 13.38us
