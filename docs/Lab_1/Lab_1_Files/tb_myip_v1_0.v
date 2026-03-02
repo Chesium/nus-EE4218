@@ -46,9 +46,9 @@ module tb_myip_v1_0(
                 .M_AXIS_TREADY(M_AXIS_TREADY)
 	);
 	
-	localparam NUMBER_OF_INPUT_WORDS  = 12;  // length of an input vector
-	localparam NUMBER_OF_OUTPUT_WORDS  = 2;  // length of an input vector
-	localparam NUMBER_OF_TEST_VECTORS  = 5;  // number of such test vectors (cases)
+	localparam NUMBER_OF_INPUT_WORDS  = 520;  // length of an input vector (for lab 1: 12) (for lab 3: 520)
+	localparam NUMBER_OF_OUTPUT_WORDS  = 64;  // length of an output vector (for lab 1:  2) (for lab 3: 64)
+	localparam NUMBER_OF_TEST_VECTORS  = 1;  // number of such test vectors (cases) (for lab 1: 5)
 	localparam width  = 8;  // width of an input vector
 
 	// 4 inputs * 2
@@ -73,10 +73,15 @@ module tb_myip_v1_0(
 	initial
 	begin
 		$display("Loading Memory.");
+		
 		// add the .mem file to the project or specify the complete path
-		$readmemh("test_input.mem", test_input_memory);
+		$readmemh("test_64x8_input.mem", test_input_memory); // for lab 3
+		// $readmemh("test_input.mem", test_input_memory); // for lab 1
+
 		// add the .mem file to the project or specify the complete path
-		$readmemh("test_result_expected.mem", test_result_expected_memory); 
+		$readmemh("test_64x8_expected.mem", test_result_expected_memory); // for lab 3 
+		// $readmemh("test_result_expected.mem", test_result_expected_memory);  // for lab 1
+
 		#25						// to make inputs and capture from testbench not aligned with clock edges
 		ARESETN = 1'b0;			// apply reset (active low)
 		S_AXIS_TVALID = 1'b0;	// no valid data placed on the S_AXIS_TDATA yet

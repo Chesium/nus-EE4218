@@ -19,8 +19,9 @@
 
 module memory_RAM
 	#(
-		parameter width = 8, 					// width is the number of bits per location
-		parameter depth_bits = 2				// depth is the number of locations (2^number of address bits)
+		// 256 * 256  2bit per pixel (1 address per pixel)
+		parameter width = 8, 					  // width is the number of bits per location
+		parameter depth_bits = 14				// depth is the number of locations (2^number of address bits)
 	) 
 	(
 		input clk,
@@ -32,7 +33,7 @@ module memory_RAM
 		output reg [width-1:0] read_data_out
 	);
     
-    reg [width-1:0] RAM [0:2**depth_bits-1];
+    reg [width-1:0] RAM [0:2**depth_bits-1]; // [0x00  0x00  0x00  0x00]  2**7 128 
     wire [depth_bits-1:0] address;
     wire enable;
     

@@ -75,9 +75,9 @@ module myip_v1_0
 
 
 // RAM parameters for assignment 1
-	localparam A_depth_bits = 3;  	// 8 elements (A is a 2x4 matrix)
-	localparam B_depth_bits = 2; 	// 4 elements (B is a 4x1 matrix)
-	localparam RES_depth_bits = 1;	// 2 elements (RES is a 2x1 matrix)
+	localparam A_depth_bits = 9;  	// 3 for lab 1: 8 elements (A is a 2x4 matrix)   for lab 3: 9 (A:64x8=512)
+	localparam B_depth_bits = 3; 	// 2 for lab 1: 4 elements (B is a 4x1 matrix)     for lab 3: 3 (B:8x1=8)
+	localparam RES_depth_bits = 6;	// 1 for lab 1: 2 elements (RES is a 2x1 matrix) for lab 3: 6 (R:64x1=64)
 	localparam width = 8;			// all 8-bit data
 	
 // wires (or regs) to connect to RAMs and matrix_multiply_0 for assignment 1
@@ -105,12 +105,12 @@ module myip_v1_0
 	reg		Start; 								// myip_v1_0 -> matrix_multiply_0. To be assigned within myip_v1_0. Possibly reg.
 	wire	Done;								// matrix_multiply_0 -> myip_v1_0. 
 			
-	localparam NUMBER_OF_A_WORDS = 8; // 2**A_depth_bits
+	localparam NUMBER_OF_A_WORDS = 512; // 2**A_depth_bits
 	// Total number of input data.
-	localparam NUMBER_OF_INPUT_WORDS  = 12; // 2**A_depth_bits + 2**B_depth_bits = 12 for assignment 1
+	localparam NUMBER_OF_INPUT_WORDS  = 520; // 2**A_depth_bits + 2**B_depth_bits = 12 for assignment 1
 
 	// Total number of output data
-	localparam NUMBER_OF_OUTPUT_WORDS = 2; // 2**RES_depth_bits = 2 for assignment 1
+	localparam NUMBER_OF_OUTPUT_WORDS = 64; // 2**RES_depth_bits = 2 for assignment 1
 
 	// Define the states of state machine (one hot encoding)
 	localparam Idle  = 4'b1000;
