@@ -59,15 +59,15 @@ void initData();
 void mlp_core();
 void software_mlp();
 
-const int db = 0;
+const int db = 1;
 
 int main()
 {
-  if(db) xil_printf("[main] EE4218 LAB 3 <G-FriAM-1> DMA DEMO BEGINS.\r\n");
+  if(db) xil_printf("[main] EE4218 Project <G-FriAM-1> DEMO BEGINS.\r\n");
   initData();
   dma(db);
   software_mlp();
-  if(db) xil_printf("[main] EE4218 LAB 3 <G-FriAM-1> DMA DEMO BEGINS.\r\n");
+  if(db) xil_printf("[main] EE4218 Project <G-FriAM-1> DEMO BEGINS.\r\n");
 	return XST_SUCCESS;
 }
 
@@ -95,8 +95,15 @@ void initData()
 }
 
 void mlp_core(){
-  memset(Xb, -1, sizeof(Xb));
-  memset(Mb, -1, sizeof(Mb));
+  // memset(Xb, -1, sizeof(Xb));
+  // memset(Mb, -1, sizeof(Mb));
+
+  // bias term
+  for (int i = 0; i < SampleN; i++)
+  {
+    Xb[i * (FeatureN + 1)] = 0xFF;
+    Mb[i * (NodeN + 1)] = 0xFF;
+  }
   for (int i = 0; i < X_LEN; i++)
   {
     Xb[i / FeatureN * (FeatureN + 1) + i % FeatureN + 1] = X[i];

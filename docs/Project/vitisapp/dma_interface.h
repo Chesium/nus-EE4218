@@ -8,7 +8,6 @@
 #include "xil_exception.h"
 #include "xil_cache.h"
 #include "xstatus.h"
-#include "data.h"
 
 /***************** Transmit and receive buffers *********************/
 #ifndef DDR_BASE_ADDR
@@ -26,7 +25,7 @@ DEFAULT SET TO 0x01000000
 #define RX_BUFFER_HIGH		(MEM_BASE_ADDR + 0x004FFFFF)
 
 /***************** Macros *********************/
-#define NUMBER_OF_INPUT_WORDS 520  // length of an input vector
+#define NUMBER_OF_INPUT_WORDS 467  // length of an input vector
 #define NUMBER_OF_OUTPUT_WORDS 64  // length of an input vector
 #define NUMBER_OF_TEST_VECTORS 1  // number of such test vectors (cases)
 
@@ -34,7 +33,6 @@ DEFAULT SET TO 0x01000000
 
 /************************** Variable Definitions *****************************/
 
-void initData(const u32 *A, size_t A_size, const u32 *B, size_t B_size);
 int dma_core(const int db);
 int dma(const int db);
 

@@ -51,7 +51,8 @@ XTmrCtr TimerCounter; /* The instance of the Tmrctr Device */
  * @note		None.
  *
  ******************************************************************************/
-int timer_main(void) {
+int timer_main(void)
+{
 
   int Status;
 
@@ -64,7 +65,8 @@ int timer_main(void) {
   Status = TmrCtrPolledExample(XTMRCTR_BASEADDRESS, TIMER_COUNTER_0);
 #endif
 
-  if (Status != XST_SUCCESS) {
+  if (Status != XST_SUCCESS)
+  {
     xil_printf("Tmrctr polled Example Failed\r\n");
     return XST_FAILURE;
   }
@@ -117,7 +119,8 @@ int TmrCtrPolledExample(UINTPTR BaseAddr, u8 TmrCtrNumber)
 #else
   Status = XTmrCtr_Initialize(TmrCtrInstancePtr, BaseAddr);
 #endif
-  if (Status != XST_SUCCESS) {
+  if (Status != XST_SUCCESS)
+  {
     return XST_FAILURE;
   }
 
@@ -126,7 +129,8 @@ int TmrCtrPolledExample(UINTPTR BaseAddr, u8 TmrCtrNumber)
    * correctly, use the 1st timer in the device (0)
    */
   Status = XTmrCtr_SelfTest(TmrCtrInstancePtr, TmrCtrNumber);
-  if (Status != XST_SUCCESS) {
+  if (Status != XST_SUCCESS)
+  {
     return XST_FAILURE;
   }
 
@@ -152,9 +156,11 @@ int TmrCtrPolledExample(UINTPTR BaseAddr, u8 TmrCtrNumber)
    * working for some reason, this loop could be infinite such that the
    * function does not return
    */
-  while (1) {
+  while (1)
+  {
     Value2 = XTmrCtr_GetValue(TmrCtrInstancePtr, TmrCtrNumber);
-    if (Value1 != Value2) {
+    if (Value1 != Value2)
+    {
       xil_printf("v1=%d v2=%d\n\r", Value1, Value2);
       break;
     }
@@ -168,7 +174,8 @@ int TmrCtrPolledExample(UINTPTR BaseAddr, u8 TmrCtrNumber)
   return XST_SUCCESS;
 }
 
-int initTimer() {
+int initTimer()
+{
   UINTPTR BaseAddr = XTMRCTR_BASEADDRESS;
   u8 TmrCtrNumber = TIMER_COUNTER_0;
 
@@ -184,7 +191,8 @@ int initTimer() {
 #else
   Status = XTmrCtr_Initialize(TmrCtrInstancePtr, BaseAddr);
 #endif
-  if (Status != XST_SUCCESS) {
+  if (Status != XST_SUCCESS)
+  {
     return XST_FAILURE;
   }
 
@@ -193,14 +201,16 @@ int initTimer() {
    * correctly, use the 1st timer in the device (0)
    */
   Status = XTmrCtr_SelfTest(TmrCtrInstancePtr, TmrCtrNumber);
-  if (Status != XST_SUCCESS) {
+  if (Status != XST_SUCCESS)
+  {
     return XST_FAILURE;
   }
   return Status;
 }
 
 u32 Value1;
-u32 startTimer() {
+u32 startTimer()
+{
   /*
    * Enable the Autoreload mode of the timer counters.
    */
@@ -224,7 +234,8 @@ u32 startTimer() {
   // }
 }
 u32 Value2;
-u32 endTimer(u32 Value1, u32 *value_ptr) {
+u32 endTimer(u32 Value1, u32 *value_ptr)
+{
   // while(Value2==Value1)
   Value2 = XTmrCtr_GetValue(&TimerCounter, TIMER_COUNTER_0);
 
@@ -233,14 +244,16 @@ u32 endTimer(u32 Value1, u32 *value_ptr) {
    */
   XTmrCtr_SetOptions(&TimerCounter, TIMER_COUNTER_0, 0);
 
-  if (value_ptr != NULL) {
+  if (value_ptr != NULL)
+  {
     *value_ptr = Value2;
   }
 
   return Value2 - Value1;
 }
 
-void cycle2time(u32 cycles, double *ns, double *us, double *ms, double *s) {
+void cycle2time(u32 cycles, double *ns, double *us, double *ms, double *s)
+{
   // period   = 1/CLK_FREQ (s)
   // time<s>  = cycles * period = cycles / CLK_FREQ
   // time<ms> = cycles / CLK_FREQ * 1000

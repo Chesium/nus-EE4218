@@ -3,10 +3,11 @@
 #include <stdio.h>
 #include <xstatus.h>
 
-XAxiDma AxiDma;	// Device instance
+XAxiDma AxiDma;                 // Device instance
 XAxiDma *InstancePtr = &AxiDma; // Device pointer
 
-int dma_core(const int db) {
+int dma_core(const int db)
+{
   int Status;
 
   int *test_input_memory = (int *)TX_BUFFER_BASE;
@@ -17,18 +18,21 @@ int dma_core(const int db) {
 
   /* Initialize the XAxiDma device.*/
   CfgPtr = XAxiDma_LookupConfig(DMA_DEV_ID);
-  if (!CfgPtr) {
+  if (!CfgPtr)
+  {
     xil_printf("No config found for %d\r\n", DMA_DEV_ID);
     return XST_FAILURE;
   }
 
   Status = XAxiDma_CfgInitialize(&AxiDma, CfgPtr);
-  if (Status != XST_SUCCESS) {
+  if (Status != XST_SUCCESS)
+  {
     xil_printf("Initialization failed %d\r\n", Status);
     return XST_FAILURE;
   }
 
-  if (XAxiDma_HasSg(&AxiDma)) {
+  if (XAxiDma_HasSg(&AxiDma))
+  {
     xil_printf("Device configured as SG mode \r\n");
     return XST_FAILURE;
   }
@@ -51,10 +55,12 @@ int dma_core(const int db) {
       XAxiDma_SimpleTransfer(&AxiDma, (UINTPTR)test_input_memory,
                              4 * NUMBER_OF_INPUT_WORDS, XAXIDMA_DMA_TO_DEVICE);
 
-  if (Status != XST_SUCCESS) {
+  if (Status != XST_SUCCESS)
+  {
     return XST_FAILURE;
   }
-  while (XAxiDma_Busy(&AxiDma, XAXIDMA_DMA_TO_DEVICE)) {
+  while (XAxiDma_Busy(&AxiDma, XAXIDMA_DMA_TO_DEVICE))
+  {
     // wait for transfer to complete
   }
   /* Transmission Complete */
@@ -69,7 +75,8 @@ int dma_core(const int db) {
 
   if (Status != XST_SUCCESS)
     return XST_FAILURE;
-  while (XAxiDma_Busy(&AxiDma, XAXIDMA_DEVICE_TO_DMA)) {
+  while (XAxiDma_Busy(&AxiDma, XAXIDMA_DEVICE_TO_DMA))
+  {
     // wait for transfer to complete
   }
   /* Invalidate the DestBuffer before receiving the data, in case the Data Cache
@@ -79,7 +86,8 @@ int dma_core(const int db) {
   return XST_SUCCESS;
 }
 
-int dma(const int db) {
+int dma(const int db)
+{
   u32 t1, t2, diff;
   initTimer();
   t1 = startTimer();
@@ -91,12 +99,12 @@ int dma(const int db) {
   cycle2time(diff, &t_ns, &t_us, NULL, NULL);
   printf("[DMA] DMA Time: %d cycles = %.2fns = %.2fus\r\n", diff, t_ns, t_us);
 
-
   int *result_memory = (int *)RX_BUFFER_BASE;
 
-    for(int i=0;i<64;i++){
-        xil_printf("DMA Result[%d]=%d\r\n",i,result_memory[i]);
-    }
-  
+  for (int i = 0; i < 64; i++)
+  {
+    xil_printf("DMA Result[%d]=%d\r\n", i, result_memory[i]);
+  }
+
   return ret;
 }
