@@ -45,8 +45,8 @@ int dma_core(const int db)
   // Xil_DCacheDisable(); // uncomment this as a last resort, which will avoid
   // all cache related issues, but at the expense of performance.
 
-  if (db)
-    xil_printf("[DMA_CORE] Transmitting Data ...\r\n");
+  // if (db)
+  //   xil_printf("[DMA_CORE] Transmitting Data ...\r\n");
   /* Flush the SrcBuffer and DestBuffer before the DMA transfer, in case the
    * Data Cache is enabled */
   Xil_DCacheFlushRange((UINTPTR)result_memory, 4 * NUMBER_OF_INPUT_WORDS);
@@ -67,8 +67,8 @@ int dma_core(const int db)
   /* Transmission Complete */
   /************************** Receive the Data Stream
    * *****************************/
-  if (db)
-    xil_printf("[DMA_CORE] Receiving Data ...\r\n");
+  // if (db)
+  //   xil_printf("[DMA_CORE] Receiving Data ...\r\n");
 
   Status =
       XAxiDma_SimpleTransfer(&AxiDma, (UINTPTR)result_memory,
