@@ -14,7 +14,7 @@ module mlp_tb ();
   wire          M_AXIS_TLAST;  // Optional data out qualifier
   reg           M_AXIS_TREADY;  // Connected slave device is ready to accept data out
 
-  myip_v1_0 U1 (
+  mlp_ip dut (
       .ACLK(ACLK),
       .ARESETN(ARESETN),
       .S_AXIS_TREADY(S_AXIS_TREADY),
