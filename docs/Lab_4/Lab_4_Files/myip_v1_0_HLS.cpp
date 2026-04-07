@@ -17,8 +17,8 @@
 #include "ap_int.h"
 #include "ap_axi_sdata.h"
 
-#define NUMBER_OF_INPUT_WORDS 4  // length of an input vector
-#define NUMBER_OF_OUTPUT_WORDS 4  // length of an input vector
+#define NUMBER_OF_INPUT_WORDS 520  // length of an input vector
+#define NUMBER_OF_OUTPUT_WORDS 64  // length of an input vector
 
 // ACLK, ARESETN, TREADY, TDATA, TVALID are essential signals for AXIS. New version of AXI DMA seems to expect TSTRB and/or TKEEP as well.
 
