@@ -1,7 +1,8 @@
 module mlp_hid #(
     parameter integer Width          = 8,  // Width is the number of bits per location
     parameter integer XDepthBits     = 9,  // depth is the number of locations (2^number of address bits)
-    parameter integer WDepthBits     = 3
+    parameter integer WDepthBits     = 3,
+    parameter integer MbDepthBits     = 3
     // (n,m) * (m,1) = (n,1)
     // n*m = 2^A, m = 2^B => n = 2^(A-B)
 ) (
@@ -21,7 +22,8 @@ module mlp_hid #(
 
     // one RAM, two write ports
     output reg                             RES_write_en,
-    output reg [XDepthBits-WDepthBits-1:0] RES_write_address,
+    output wire [MbDepthBits:0]            RES_write_address1,
+    output wire [MbDepthBits:0]            RES_write_address2,
     output reg [Width-1:0]                 RES_write_data_in1,
     output reg [Width-1:0]                 RES_write_data_in2
 );
@@ -46,6 +48,11 @@ module mlp_hid #(
   assign W_nxt_address = W_read_address + 1;
   assign nxt_tmp_res1   = tmp_res1 + X_read_data_out * W1_read_data_out;
   assign nxt_tmp_res2   = tmp_res2 + X_read_data_out * W2_read_data_out;
+
+  reg [XDepthBits-WDepthBits-1:0] RES_write_address;
+
+  assign RES_write_address1 = RES_write_address * 3 + 1;
+  assign RES_write_address2 = RES_write_address * 3 + 2;
 
   // assign Done = Start; // dummy code. Change as appropriate.
   always @(posedge clk) begin

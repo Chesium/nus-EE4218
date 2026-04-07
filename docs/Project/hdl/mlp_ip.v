@@ -86,31 +86,11 @@ module mlp_ip (
   wire [WDepthBits-1:0] W3_read_address;
   wire [Width-1:0] W3_read_data_out;
 
-  wire M1_write_en;
-  wire [MDepthBits-1:0] M1_write_address;
-  wire [Width-1:0] M1_write_data_in;
-  wire M1_read_en;
-  wire [MDepthBits-1:0] M1_read_address;
-  wire [Width-1:0] M1_read_data_out;
-
-  wire M2_write_en;
-  wire [MDepthBits-1:0] M2_write_address;
-  wire [Width-1:0] M2_write_data_in;
-  wire M2_read_en;
-  wire [MDepthBits-1:0] M2_read_address;
-  wire [Width-1:0] M2_read_data_out;
-
-  // for mlp_hid (sync write for both M1 and M2)
-  wire M_write_en;
-  assign M1_write_en = M_write_en;
-  assign M2_write_en = M_write_en;
-  wire [MDepthBits-1:0] M_write_address;
-  assign M1_write_address = M_write_address;
-  assign M2_write_address = M_write_address;
-
-  reg Mb_write_en;
-  reg [MbDepthBits-1:0] Mb_write_address;
-  reg [Width-1:0] Mb_write_data_in;
+  wire Mb_write_en;
+  wire [MbDepthBits-1:0] Mb_write_address1;
+  wire [Width-1:0] Mb_write_data_in1;
+  wire [MbDepthBits-1:0] Mb_write_address2;
+  wire [Width-1:0] Mb_write_data_in2;
   wire Mb_read_en;
   wire [MbDepthBits-1:0] Mb_read_address;
   wire [Width-1:0] Mb_read_data_out;
@@ -131,7 +111,7 @@ module mlp_ip (
   localparam integer W3Length = 3;
   localparam integer XLength = 448;
 
-  localparam integer NumberOfInputWords  = W1Length + W2Length + W3Length + XLength;
+  localparam integer NumberOfInputWords = W1Length + W2Length + W3Length + XLength;
   localparam integer NumberOfOutputWords = 64;
 
   // Define the states of state machine (one hot encoding)
@@ -166,10 +146,10 @@ module mlp_ip (
       // CAUTION: make sure your reset polarity is consistent with the system reset polarity
       state <= Idle;
     end else begin
-      Xb_write_en  <= 0;
-      W1_write_en  <= 0;
-      W2_write_en  <= 0;
-      W3_write_en  <= 0;
+      Xb_write_en <= 0;
+      W1_write_en <= 0;
+      W2_write_en <= 0;
+      W3_write_en <= 0;
       case (state)
 
         Idle: begin
@@ -339,45 +319,20 @@ module mlp_ip (
       .read_data_out(W3_read_data_out)
   );
 
-  memory_RAM #(
-      .width(Width),
-      .depth_bits(MDepthBits)
-  ) M1_RAM (
-      .clk(ACLK),
-      .write_en(M1_write_en),
-      .write_address(M1_write_address),
-      .write_data_in(M1_write_data_in),
-      .read_en(M1_read_en),
-      .read_address(M1_read_address),
-      .read_data_out(M1_read_data_out)
-  );
-
-  memory_RAM #(
-      .width(Width),
-      .depth_bits(MDepthBits)
-  ) M2_RAM (
-      .clk(ACLK),
-      .write_en(M2_write_en),
-      .write_address(M2_write_address),
-      .write_data_in(M2_write_data_in),
-      .read_en(M2_read_en),
-      .read_address(M2_read_address),
-      .read_data_out(M2_read_data_out)
-  );
-
-  initialized_ram #(
+  hid_res_ram #(
       .Width(Width),
       .DepthBits(MbDepthBits)
   ) Mb_RAM (
       .clk(ACLK),
       .write_en(Mb_write_en),
-      .write_address(Mb_write_address),
-      .write_data_in(Mb_write_data_in),
+      .write_address1(Mb_write_address1),
+      .write_data_in1(Mb_write_data_in1),
+      .write_address2(Mb_write_address2),
+      .write_data_in2(Mb_write_data_in2),
       .read_en(Mb_read_en),
       .read_address(Mb_read_address),
       .read_data_out(Mb_read_data_out)
   );
-
 
   memory_RAM #(
       .width(Width),
@@ -393,9 +348,10 @@ module mlp_ip (
   );
 
   mlp_hid #(
-      .Width     (Width),
-      .XDepthBits(XbDepthBits),
-      .WDepthBits(WDepthBits)
+      .Width      (Width),
+      .XDepthBits (XbDepthBits),
+      .WDepthBits (WDepthBits),
+      .MbDepthBits(MbDepthBits)
   ) mlp_hid_inst (
       .clk  (ACLK),
       .Start(Start),
@@ -410,10 +366,11 @@ module mlp_ip (
       .W1_read_data_out(W1_read_data_out),
       .W2_read_data_out(W2_read_data_out),
 
-      .RES_write_en(M_write_en),
-      .RES_write_address(M_write_address),
-      .RES_write_data_in1(M1_write_data_in),
-      .RES_write_data_in2(M2_write_data_in)
+      .RES_write_en(Mb_write_en),
+      .RES_write_address1(Mb_write_address1),
+      .RES_write_address2(Mb_write_address2),
+      .RES_write_data_in1(Mb_write_data_in1),
+      .RES_write_data_in2(Mb_write_data_in2)
   );
 
 endmodule
