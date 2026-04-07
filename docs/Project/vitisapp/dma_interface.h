@@ -11,8 +11,6 @@
 
 /***************** Transmit and receive buffers *********************/
 #ifndef DDR_BASE_ADDR
-#warning CHECK FOR THE VALID DDR ADDRESS IN XPARAMETERS.H, \
-DEFAULT SET TO 0x01000000
 #define MEM_BASE_ADDR		0x01000000
 #else
 #define MEM_BASE_ADDR		(DDR_BASE_ADDR + 0x1000000)
@@ -25,8 +23,24 @@ DEFAULT SET TO 0x01000000
 #define RX_BUFFER_HIGH		(MEM_BASE_ADDR + 0x004FFFFF)
 
 /***************** Macros *********************/
-#define NUMBER_OF_INPUT_WORDS 467  // length of an input vector
-#define NUMBER_OF_OUTPUT_WORDS 64  // length of an input vector
+
+#define Width 8
+#define FeatureN 7
+#define SampleN 64
+#define NodeN 2
+
+#define W1_LEN (FeatureN + 1)
+#define W2_LEN (FeatureN + 1)
+#define W3_LEN (NodeN + 1)
+
+#define X_LEN (SampleN * FeatureN)
+#define Xb_LEN (SampleN * (FeatureN + 1))
+// #define M_LEN (SampleN * NodeN)
+#define Mb_LEN (SampleN * (NodeN + 1))
+#define RES_LEN SampleN
+
+#define NUMBER_OF_INPUT_WORDS (W1_LEN + W2_LEN + W3_LEN + X_LEN)
+#define NUMBER_OF_OUTPUT_WORDS RES_LEN
 #define NUMBER_OF_TEST_VECTORS 1  // number of such test vectors (cases)
 
 #define DMA_DEV_ID        XPAR_XAXIDMA_0_BASEADDR
