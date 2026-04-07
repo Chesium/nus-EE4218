@@ -8,6 +8,9 @@ extern const uint32_t data_W2[8];
 extern const uint32_t data_W3[3];
 extern const uint32_t data_X[448];
 extern const uint32_t data_ref[64];
+extern const uint8_t data_labels[64];
 extern const uint8_t sig_value[256];
+
+float accuracy(uint32_t *data_out, uint32_t n);
 
 #endif

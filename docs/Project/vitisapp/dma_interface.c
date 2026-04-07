@@ -1,5 +1,6 @@
 #include "dma_interface.h"
 #include "timer.h"
+#include "mlp_data.h"
 #include <stdio.h>
 #include <xstatus.h>
 
@@ -102,9 +103,9 @@ int dma(const int db)
   int *result_memory = (int *)RX_BUFFER_BASE;
 
   for (int i = 0; i < 64; i++)
-  {
     xil_printf("DMA Result[%d]=%d\r\n", i, result_memory[i]);
-  }
+
+  printf("[DMA] accuracy: %.4f\r\n", accuracy((uint32_t *)result_memory, SampleN));
 
   return ret;
 }

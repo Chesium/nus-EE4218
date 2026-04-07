@@ -7,6 +7,7 @@
 
 #include "mlp_data.h"
 #include "dma_interface.h"
+#include "timer.h"
 #include <stdio.h>
 
 u32 W1[W1_LEN];
@@ -114,9 +115,10 @@ void software_mlp()
   double t_ns, t_us;
   cycle2time(diff, &t_ns, &t_us, NULL, NULL);
   if (db)
-    printf("[matmul] Time: %d cycles = %.2fns = %.2fus\r\n", diff, t_ns, t_us);
+    printf("[software] Time: %d cycles = %.2fns = %.2fus\r\n", diff, t_ns, t_us);
   for (int i = 0; i < (int)RES_LEN; i++)
     xil_printf("[software] [%d]=%d\r\n", i, RES[i]);
   if (db)
     xil_printf("\r\n");
+  printf("[software] accuracy: %.4f\r\n", accuracy(RES, SampleN));
 }
