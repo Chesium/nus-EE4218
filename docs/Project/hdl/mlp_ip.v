@@ -83,7 +83,9 @@ module mlp_ip (
   reg [WDepthBits-1:0] W3_write_address;
   reg [Width-1:0] W3_write_data_in;
   wire W3_read_en;
-  wire [WDepthBits-1:0] W3_read_address;
+  wire [1:0] W3_read_address;
+  wire [2:0] W3_read_address_full;
+  assign W3_read_address_full = {1'b0,W3_read_address};
   wire [Width-1:0] W3_read_data_out;
 
   wire Mb_write_en;
@@ -102,9 +104,10 @@ module mlp_ip (
   reg [RESDepthBits-1:0] RES_read_address;
   wire [Width-1:0] RES_read_data_out;
 
-  // wires (or regs) to connect to matrix_multiply for assignment 1
-  reg Start;  // myip_v1_0 -> matrix_multiply_0. To be assigned within myip_v1_0. Possibly reg.
-  wire Done;  // matrix_multiply_0 -> myip_v1_0.
+  reg hid_Start;
+  wire hid_Done;
+  reg out_Start;
+  wire out_Done;
 
   localparam integer W1Length = 8;
   localparam integer W2Length = 8;
@@ -115,12 +118,13 @@ module mlp_ip (
   localparam integer NumberOfOutputWords = 64;
 
   // Define the states of state machine (one hot encoding)
-  localparam integer Idle = 4'b1000;
-  localparam integer ReadInputs = 4'b0100;
-  localparam integer Compute = 4'b0010;
-  localparam integer WriteOutputs = 4'b0001;
+  localparam integer Idle = 5'b10000;
+  localparam integer ReadInputs = 5'b01000;
+  localparam integer ComputeHid = 5'b00100;
+  localparam integer ComputeOut = 5'b00010;
+  localparam integer WriteOutputs = 5'b00001;
 
-  reg [3:0] state;
+  reg [4:0] state;
 
   // Accumulator to hold sum of inputs read at any point in time
   // reg [31:0] sum;
@@ -208,7 +212,10 @@ module mlp_ip (
             // Since the number of words we are expecting is fixed, we simply count and receive
             // the expected number (NumberOfInputWords) instead.
             if (read_counter == NumberOfInputWords - 1) begin
-              state         <= Compute;
+              W3_write_en <= 1;
+              W3_write_address <= 3;
+              W3_write_data_in <= 8'd0;
+              state         <= ComputeHid;
               S_AXIS_TREADY <= 0;
             end else begin
               read_counter <= read_counter + 1;
@@ -216,10 +223,18 @@ module mlp_ip (
           end
         end
 
-        Compute: begin
-          Start <= 1;
-          if (Done) begin
-            Start    <= 0;
+        ComputeHid: begin
+          hid_Start <= 1;
+          if (hid_Done) begin
+            hid_Start    <= 0;
+            state    <= ComputeOut;
+          end
+        end
+
+        ComputeOut: begin
+          out_Start <= 1;
+          if (out_Done) begin
+            out_Start    <= 0;
             state    <= WriteOutputs;
             // START THE FIRST READING OF THE RES RAM
             RES_read_en   <= 1;
@@ -315,7 +330,7 @@ module mlp_ip (
       .write_address(W3_write_address),
       .write_data_in(W3_write_data_in),
       .read_en(W3_read_en),
-      .read_address(W3_read_address),
+      .read_address(W3_read_address_full),
       .read_data_out(W3_read_data_out)
   );
 
@@ -354,8 +369,8 @@ module mlp_ip (
       .MbDepthBits(MbDepthBits)
   ) mlp_hid_inst (
       .clk  (ACLK),
-      .Start(Start),
-      .Done (Done),
+      .Start(hid_Start),
+      .Done (hid_Done),
 
       .X_read_en(Xb_read_en),
       .X_read_address(Xb_read_address),
@@ -371,6 +386,30 @@ module mlp_ip (
       .RES_write_address2(Mb_write_address2),
       .RES_write_data_in1(Mb_write_data_in1),
       .RES_write_data_in2(Mb_write_data_in2)
+  );
+
+  matrix_multiply #(
+    .width(Width),
+    .A_depth_bits(MbDepthBits),
+    .B_depth_bits(MbDepthBits - RESDepthBits),
+    .RES_depth_bits(RESDepthBits)
+  ) mlp_out_inst
+  (
+    .clk(ACLK),
+    .Start(out_Start),
+    .Done(out_Done),
+
+    .A_read_en(Mb_read_en),
+    .A_read_address(Mb_read_address),
+    .A_read_data_out(Mb_read_data_out),
+
+    .B_read_en(W3_read_en),
+    .B_read_address(W3_read_address),
+    .B_read_data_out(W3_read_data_out),
+
+    .RES_write_en(RES_write_en),
+    .RES_write_address(RES_write_address),
+    .RES_write_data_in(RES_write_data_in)
   );
 
 endmodule

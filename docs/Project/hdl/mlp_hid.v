@@ -51,8 +51,8 @@ module mlp_hid #(
 
   reg [XDepthBits-WDepthBits-1:0] RES_write_address;
 
-  assign RES_write_address1 = RES_write_address * 3 + 1;
-  assign RES_write_address2 = RES_write_address * 3 + 2;
+  assign RES_write_address1 = RES_write_address * 4 + 1;
+  assign RES_write_address2 = RES_write_address * 4 + 2;
 
   // assign Done = Start; // dummy code. Change as appropriate.
   always @(posedge clk) begin
